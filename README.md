@@ -5,8 +5,8 @@ disk image in `Thrust_C64_EN.zip`. Levels, graphics, physics and rules are taken
 and data. The music and sound effects are the original code (Rob Hubbard's player and the game's SFX driver),
 running on a built-in 6502 emulator that drives a SID synthesiser.
 
-[`docs/infographic.html`](docs/infographic.html) is a one-page infographic of the whole reverse-engineering
-process, from the disk image to the Mac app. Download it and open it in a browser.
+**[How it was made](https://ekhult.github.io/thrust/infographic.html)**: a one-page infographic of the whole
+reverse-engineering process, from the disk image to the Mac app (source: `docs/infographic.html`).
 
 ## Play
 
