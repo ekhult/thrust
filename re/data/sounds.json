@@ -1,0 +1,131 @@
+{
+ "notes": [
+  "SFX driver $9B58 runs every 50 Hz raster IRQ ($8A32), only when $63==0 (in game) and writes $D418 = $4F (HP filter, vol 15) or 0 if sound off ($A2).",
+  "Filter: cutoff 11-bit = $50<<3 = 640, resonance 0, mode high-pass; routing $D417 bits0/1 = voice1/2 filtered (set by thrust/shield/gun).",
+  "freq_hz = reg * 985248 / 16777216 (PAL). ADSR ms tables: attack [2, 8, 16, 24, 38, 56, 68, 80, 100, 250, 500, 800, 1000, 3000, 5000, 8000], decay/release [6, 24, 48, 72, 114, 168, 204, 240, 300, 750, 1500, 2400, 3000, 9000, 15000, 24000]",
+  "Per-frame register dumps produced by emulating the driver: sounds_frames.json (tools/rules/sfx.py).",
+  "Voice 2 pulse width low byte is swept continuously by $9B50 (+/-5 per frame, bouncing between $1E and $DC)."
+ ],
+ "effects": {
+  "player_fire": {
+   "trigger": "$9D3D (fire)",
+   "voice": 2,
+   "wave": "pulse",
+   "ctrl": "$41",
+   "freq_start": 7680,
+   "freq_start_hz": 451.0,
+   "freq_step_per_frame": -256,
+   "duration_frames": 25,
+   "pw_start": 1280,
+   "pw_lo_step": -3,
+   "ad": "$13",
+   "sr": "$23",
+   "attack_ms": 8,
+   "decay_ms": 72,
+   "sustain": 2,
+   "release_ms": 72,
+   "filtered": false,
+   "blocked_if": "shield sound active ($9B47)"
+  },
+  "gun_fire": {
+   "trigger": "$9D85 (limpet fires)",
+   "voice": 2,
+   "wave": "pulse",
+   "freq": 3840,
+   "freq_hz": 225.5,
+   "pw_hi": 1,
+   "duration_frames": 5,
+   "ad": "$23",
+   "sr": "$03",
+   "attack_ms": 16,
+   "decay_ms": 72,
+   "sustain": 0,
+   "release_ms": 72,
+   "filtered": true,
+   "blocked_if": "shield or player-fire sound active"
+  },
+  "shield_tractor": {
+   "trigger": "$9D07 each tick SPACE consumes fuel",
+   "voice": 2,
+   "wave": "pulse",
+   "freq": 2048,
+   "freq_hz": 120.3,
+   "pw_hi": 1,
+   "pw_lo": "swept",
+   "ad": "$00",
+   "sr": "$67",
+   "sustain": 6,
+   "release_ms": 240,
+   "hold_frames_after_last_trigger": 10,
+   "filtered": true
+  },
+  "thrust": {
+   "trigger": "$9CCF each thrust tick",
+   "voice": 1,
+   "wave": "noise",
+   "freq": 5120,
+   "freq_hz": 300.7,
+   "ad": "$00",
+   "sr": "$B6",
+   "sustain": 11,
+   "release_ms": 204,
+   "hold_frames_after_last_trigger": 8,
+   "filtered": true,
+   "blocked_if": "explosion playing"
+  },
+  "explosion": {
+   "trigger": "$9C94 from $9EF5 (any explosion incl. reactor hit spark, ship death)",
+   "voice": 1,
+   "wave": "noise",
+   "freq_hi": 5,
+   "freq_lo_start": 255,
+   "freq_lo_step": -5,
+   "freq_lo_bounce": [
+    100,
+    200
+   ],
+   "freq_hz_range": [
+    81.0,
+    90.1
+   ],
+   "gate_frames": 30,
+   "total_frames_blocking_thrust": 50,
+   "ad": "$2A",
+   "sr": "$8C",
+   "attack_ms": 16,
+   "decay_ms": 1500,
+   "sustain": 8,
+   "release_ms": 3000,
+   "filtered": false
+  },
+  "ping": {
+   "trigger": "$9C75; countdown step ($9DD1)",
+   "voice": 3,
+   "wave": "sawtooth",
+   "freq": 43520,
+   "freq_hz": 2555.7,
+   "ad": "$22",
+   "sr": "$02",
+   "attack_ms": 16,
+   "decay_ms": 48,
+   "sustain": 0,
+   "release_ms": 48,
+   "gate": "left on",
+   "filtered": false
+  },
+  "fuel_or_pod_pickup": {
+   "trigger": "$9DC4: fuel cell emptied, pod attached",
+   "voice": 3,
+   "pattern": "ping, second ping 9 frames later"
+  }
+ },
+ "music": {
+  "player": "$2000-$2CAC (Rob Hubbard driver), data/tables $238F (freq table), $244F.. state, $2487 instruments (8 bytes), $2565/$2568 track pointers, $256B/$2592 pattern pointers, track lists $25B9/$2657/$26EF",
+  "play": "$3000 (= JMP $2000), called once per raster IRQ (50 Hz) from $8A38; the player itself skips every 11th call",
+  "init": "none: state at $2452-$2484 starts at 0 in mem_at_start.bin; player never re-inits (resumes where it left off)",
+  "enable": "plays only when $63 != 0 (title/demo) and $A2 == 0; otherwise $2C96 silences voices once ($246F)",
+  "length_calls": 20054,
+  "length_seconds": 400.1,
+  "dump": "music_sid_frames.json (tools/rules/music.py)"
+ }
+}

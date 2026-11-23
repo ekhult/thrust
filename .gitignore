@@ -1,0 +1,5 @@
+.DS_Store
+ThrustMac/.build/
+ThrustMac/build/
+__pycache__/
+*.pyc

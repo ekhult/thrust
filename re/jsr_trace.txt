@@ -1,0 +1,142 @@
+game  3000 x   540  from 8A38
+game  828B x   249  from AFE1 B184 B1D1
+game  83B4 x     1  from AFDB B17B
+game  83FB x  2976  from 8439 8454 8484 849F
+game  83FE x   151  from 9044
+game  840F x   593  from 83EF 902D
+game  841C x   151  from 840B
+game  8556 x     5  from B41B
+game  8571 x   250  from AFE7 B010 B187 B1C2 B1F4
+game  880A x  1000  from 85F3
+game  889B x   691  from 87F5
+game  8B41 x   256  from 0480 AFD8 B00D B178 B19F B1CE B1FA B40C
+game  8B52 x  1212  from 88CC 88E2 88EC 890A 8914 8923 892D
+game  8BE8 x   258  from 0483 A767 A86A B00A B18A B1CB B1F7 B40F
+game  8C9B x   258  from 0486 89CE
+game  8CC8 x    36  from AEEB
+game  8F0B x   364  from 8F90 8FCC
+game  8F3B x    18  from 93E1 946A
+game  8F4E x    10  from 855D 8567 93C8 93CD 93D7 93EB
+game  8F87 x   178  from 8F7E
+game  9014 x   249  from AFDE B17E B1B9
+game  917D x   249  from 904D
+game  9300 x    67  from 855A 8564 9289 92E3 93A6 9451
+game  9305 x     3  from 93B9 93DA 9460
+game  931C x   336  from 92F3 92F9
+game  9339 x    55  from 95E0 97D6
+game  9388 x   248  from B09A B1E0
+game  9446 x     1  from 947D
+game  9471 x     1  from B25D
+game  9491 x     1  from B260
+game  94A2 x     1  from B263
+game  9588 x   248  from B1E3
+game  975F x   248  from B1DA
+game  977D x   540  from 8A35
+game  9799 x   287  from B470
+game  98B2 x   287  from 9799
+game  9926 x   287  from B473
+game  9AB4 x   268  from 98AE AFE4
+game  9B58 x   540  from 8A32
+game  9CCF x    29  from 95E3
+game  9D07 x    26  from 97D9
+game  9D3D x     9  from AA88
+game  9DE2 x   540  from 89F2
+game  9E09 x   248  from B1B3
+game  9E28 x   248  from B1B6
+game  9E77 x   249  from B181 B1DD
+game  9FDD x   151  from 87B6 A579
+game  A38E x   248  from B013 B1D7
+game  A49F x  1588  from A3D8
+game  A532 x  1588  from A3CD
+game  A56D x   248  from A38E
+game  A5B9 x     1  from AFD5 B14C
+game  A6A7 x     1  from AFD2 B149
+game  A75F x     1  from 044C A5BC
+game  A832 x     1  from AFEA B0BC B25A
+game  A951 x     7  from A699 A6A0 B416
+game  A99A x   248  from B1D4
+game  A9C9 x     9  from AA0E
+game  AAB8 x   346  from 8752 A57C B14F B159 B168
+game  ACBE x     4  from AF35 AF4F
+game  ACF7 x  3024  from AD08 AD2B
+game  ACFA x  2688  from AD1D
+game  ACFD x    96  from AD92 ADA7 ADC4 ADD9
+game  AD47 x  2688  from AD1A
+game  AD55 x    24  from AEB4 AEC6
+game  AD7E x    24  from AD65
+game  ADDD x    40  from ADBE AF78
+game  ADF3 x   216  from ADA1
+game  AE08 x   216  from ADD3
+game  AE21 x    40  from ADC1 AF7B
+game  AE3B x   248  from B1C8
+game  AE52 x     2  from AF16
+game  AEAE x     2  from AF69
+game  AECE x    24  from AEC0 AEC3
+game  AED4 x    12  from AEB7
+game  AEF1 x     1  from B195
+game  AEF7 x     1  from B1FD
+game  AF76 x     4  from AF38 AF52
+game  B2C8 x   248  from B1BF
+game  B385 x   248  from B31C
+game  B3B6 x   248  from B1B0
+game  B3CF x     1  from B205
+game  B3D5 x   248  from B1E6
+game  B3E8 x     5  from A5C1 B09F B18F B1F1 B202 B268
+game  B3FE x     5  from 047D A5B9 A6A7 A75F B0B9 B146 B257
+game  B45A x   248  from B1BC
+game  B46A x     1  from B005 B19C
+game  B470 x   287  from AEE8 AF13 B192 B1C5
+game  B480 x  1080  from 977F 9788 B023
+game  B484 x  1559  from 95D1 95D8 9761 97BD 9E11 9E1A A9A9 B279
+game  B4D7 x   248  from B1AD
+menu  3000 x   132  from 8A38
+menu  828B x     1  from AFE1 B184 B1D1
+menu  83B4 x     1  from AFDB B17B
+menu  83FB x  2228  from 8439 8454 8484 849F
+menu  840F x   557  from 83EF 902D
+menu  8556 x     8  from B41B
+menu  8571 x    45  from AFE7 B010 B187 B1C2 B1F4
+menu  880A x   180  from 85F3
+menu  889B x   180  from 87F5
+menu  8B41 x    54  from 0480 AFD8 B00D B178 B19F B1CE B1FA B40C
+menu  8B52 x   315  from 88CC 88E2 88EC 890A 8914 8923 892D
+menu  8BE8 x    58  from 0483 A767 A86A B00A B18A B1CB B1F7 B40F
+menu  8C9B x    54  from 0486 89CE
+menu  8F0B x   407  from 8F90 8FCC
+menu  8F3B x   147  from 93E1 946A
+menu  8F4E x   184  from 855D 8567 93C8 93CD 93D7 93EB
+menu  8F87 x   248  from 8F7E
+menu  9014 x     1  from AFDE B17E B1B9
+menu  917D x     1  from 904D
+menu  9269 x     2  from B079
+menu  92A2 x     2  from B071
+menu  92E6 x     8  from 93D2
+menu  9300 x    25  from 855A 8564 9289 92E3 93A6 9451
+menu  9305 x    18  from 93B9 93DA 9460
+menu  931C x    76  from 92F3 92F9
+menu  9388 x     2  from B09A B1E0
+menu  93A2 x     1  from AFED
+menu  940E x     1  from AFF0
+menu  942F x     1  from AFF3
+menu  977D x   132  from 8A35
+menu  9AB4 x     1  from 98AE AFE4
+menu  9B58 x   132  from 8A32
+menu  9DE2 x   132  from 89F2
+menu  9FDD x    24  from 87B6 A579
+menu  A38E x    44  from B013 B1D7
+menu  A49F x   123  from A3D8
+menu  A532 x   123  from A3CD
+menu  A56D x    44  from A38E
+menu  A5B9 x     1  from AFD5 B14C
+menu  A6A7 x     1  from AFD2 B149
+menu  A75F x     2  from 044C A5BC
+menu  A832 x     2  from AFEA B0BC B25A
+menu  A951 x    10  from A699 A6A0 B416
+menu  AAB8 x    38  from 8752 A57C B14F B159 B168
+menu  B3E8 x     3  from A5C1 B09F B18F B1F1 B202 B268
+menu  B3FE x     8  from 047D A5B9 A6A7 A75F B0B9 B146 B257
+menu  B46A x     1  from B005 B19C
+menu  B480 x   308  from 977F 9788 B023
+menu  B484 x    14  from 95D1 95D8 9761 97BD 9E11 9E1A A9A9 B279
+menu  C322 x     2  from B094
+menu  C348 x     1  from 0419

@@ -1,0 +1,7 @@
+from h import *
+c=goto_level(4); m=c.cpu.m; m[0xa3]=0
+for i in range(40):
+    cy=m[0xb]|m[0xc]<<8; cy+=3; m[0xb]=cy&255; m[0xc]=cy>>8
+    for a in (0x12,0x13,0x14,0x15,0x16): m[a]=0
+    tick(c)
+    if i%4==0: print(hex(m[0xb]|m[0xc]<<8), hex(m[3]|m[4]<<8), m[0x4c], m[6], m[0x44], m[0x19])

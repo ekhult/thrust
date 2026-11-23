@@ -1,0 +1,394 @@
+{
+ "timing": {
+  "game_tick_hz": 32.55,
+  "game_tick_cycles": 30273,
+  "note": "main loop is paced by CIA1 timer A (latch $276A, IRQ decrements $B479); 3 timer IRQs per game tick. 'ticks' below = main-loop iterations ($19). 'irq_frames' = 50.125 Hz raster IRQ frames ($1A). Measured in harness: 103 ticks per 159 video frames."
+ },
+ "start": {
+  "lives_reserve_shown": 3,
+  "ships_total": 4,
+  "fuel": 1000,
+  "score": 0,
+  "note": "$9403 set to 4 then decremented once at game start (display 3). Game over when a ship is lost while the display shows 0."
+ },
+ "extra_life_every": 10000,
+ "score_storage": "3 BCD bytes $0180(lo)..$0182 holding score/10; a fixed '0' digit is part of the status-bar graphic",
+ "scores": {
+  "limpet_gun": 750,
+  "fuel_cell_shot": 150,
+  "fuel_cell_collected": 300,
+  "reactor_hit": 0,
+  "door_switch_hit": 0,
+  "mission_complete_bonus": "400 * (level_index + 5)  (level_index = $A6A4 0..5 -> 2000..4000)",
+  "planet_destroyed_bonus": "2000 (= 400*5, only if pod was brought out while countdown running)",
+  "planet_destroyed_without_pod": 0,
+  "mission_incomplete": 0
+ },
+ "object_types": {
+  "0": "limpet gun, sprite shape $22, bullet spawn offset (+4,+0)",
+  "1": "limpet gun, shape $23, offset (+4,+8)",
+  "2": "limpet gun, shape $24, offset (+1,+0)",
+  "3": "limpet gun, shape $25, offset (+1,+8)",
+  "4": "fuel cell",
+  "5": "klystron pod (on pedestal)",
+  "6": "reactor",
+  "7": "door switch (shape $2C)",
+  "8": "door switch (shape $2D)"
+ },
+ "hitbox_w_by_type": [
+  5,
+  5,
+  5,
+  5,
+  4,
+  5,
+  5,
+  2,
+  2
+ ],
+ "hitbox_h_by_type": [
+  8,
+  8,
+  8,
+  8,
+  10,
+  8,
+  10,
+  8,
+  8
+ ],
+ "explosion_particle_kind_by_type": [
+  2,
+  2,
+  2,
+  2,
+  1
+ ],
+ "limpet_gun": {
+  "fire_probability_per_tick": "A3/256 (rand8() < $A3), per gun, measured 0.0043/0.0353/0.149/0.493 for A3=1/9/35/128",
+  "A3_formula": "mission 1-2: 1; mission n>=3: min(35, n-1); +8 on the mission after a 'planet destroyed without pod' failure; demo: 2",
+  "conditions": [
+   "gun alive",
+   "reactor recharge timer $3D == 0",
+   "no countdown ($6A < 0)",
+   "0 <= gun_y - scroll_y < 256 (high bytes equal) -- no x test"
+  ],
+  "direction": "(base + (rand_hi & mask) + (rand8() & 3)) & 31; base = flags & $1C, mask = [1,3,7,15][flags & 3]; dir 0 = up, clockwise, 32 steps",
+  "bullet_velocity_table": "dir -> (vx, vy) in 1/256 units per tick, see direction_table",
+  "bullet_lifetime_ticks": 40,
+  "bullet_owner_code": 3,
+  "max_bullets": "shared pool of 32 slots ($0600-$07BF) with explosions/smoke/stars; player uses slots 0-3",
+  "spawn_offset_by_type": {
+   "x": [
+    4,
+    4,
+    1,
+    1
+   ],
+   "y": [
+    0,
+    8,
+    0,
+    8
+   ]
+  }
+ },
+ "player_bullets": {
+  "max": 4,
+  "lifetime_ticks": 40,
+  "one_shot_per_press": true,
+  "blocked_while_shield": true,
+  "velocity": "direction_table[ship_angle] + ship velocity; pre-advanced 2 steps at spawn"
+ },
+ "reactor": {
+  "damage_accumulator": "$3E, reset to 0 on every (re)spawn of the ship (A5B9 clears zero page)",
+  "on_hit": "$3E += rand8()&31 (+carry); recharge $3D = $3E; if 8-bit overflow and no countdown: critical",
+  "recharge": "$3D decremented every 2nd tick -> guns silent (and no smoke) for 2*$3E ticks after a hit",
+  "restart_value_3D": 15,
+  "hits_to_critical": "sum of rand(0..31) must exceed 255 -> typically 14-20 hits (measured 17)",
+  "countdown": {
+   "start": 10,
+   "ticks_per_step": 33,
+   "first_digit_shown": 9,
+   "digit_after_critical_ticks": 2,
+   "total_ticks_to_zero": 299,
+   "seconds": 9.2,
+   "display": "digit drawn at status chars row1 col13 and col25",
+   "sound": "voice-3 ping each step"
+  },
+  "blink": "while counting, reactor drawn only when ($69 & 4) == 0 (4 ticks on / 4 off)",
+  "smoke": "every 8 ticks if $3D==0 and no countdown: particle at (x+4,y), vy=-114/256/tick, life 10, owner 1 (harmless)",
+  "at_zero": "ship killed, every alive object (except pod) explodes, background colour flash ($02=15, table $8B31), landscape hidden afterwards"
+ },
+ "fuel": {
+  "per_cell": 286,
+  "per_tick_while_beaming": 11,
+  "ticks_to_drain_cell": 26,
+  "beam_window": "1 <= cell_x - ship_x($33) <= 5 and 0 <= cell_y - ship_y($2F/30) < 28, ship alive, no pod attached, SPACE held",
+  "thrust_cost": "1 per thrust tick, thrust applied on 6 of 16 ticks ($19&15 in {0,3,5,8,11,13}) -> 0.375/tick",
+  "shield_cost": "1 per tick when ($1A & 2) != 0 -> ~0.5/tick",
+  "empty": "$9402=$FF: thrust/shield disabled; next ship loss or planet exit = GAME OVER (lives ignored), text 'Out of fuel'"
+ },
+ "doors": {
+  "trigger": "player bullet hits switch type 7 or 8 -> $6B = 255 (re-shoot re-arms); $6B -= 1 per tick",
+  "open_amount": "$6C: if $6B < max then $6C = $6B else $6C = min(max, $6C+1)  (opens 1/tick, held, closes 1/tick)",
+  "levels": {
+   "3": {
+    "max": 16,
+    "world_row": 617,
+    "rows": 13,
+    "kind": "left-edge table $0400 = $AE - open (horizontal sliding bar)"
+   },
+   "4": {
+    "max": 21,
+    "world_row": 835,
+    "rows": 21,
+    "kind": "plug: row (index==open) edge $98 else $A6 (opens row by row)"
+   },
+   "5": {
+    "max": 18,
+    "world_row": 880,
+    "rows": 15,
+    "kind": "wedge: 7 rows ($C0-open)+k, 8 rows decreasing"
+   }
+  },
+  "only_updated_when_near_screen": true
+ },
+ "levels": {
+  "count": 6,
+  "gravity_A8F7": [
+   5,
+   7,
+   9,
+   11,
+   12,
+   13
+  ],
+  "cycle": "after each 6 planets $A6A5 toggles (reverse gravity); when it toggles back to 0, $A5 toggles (invisible landscape)",
+  "24_planet_cycle": [
+   "1-6 normal",
+   "7-12 reverse gravity",
+   "13-18 invisible landscape",
+   "19-24 reverse+invisible",
+   "25.. repeat"
+  ],
+  "reverse_gravity": "gravity byte $A7 = gravity XOR $FF, sign $A6 = $FF; ship angle starts at 16 (pointing down)",
+  "invisible": "landscape drawn only while shield/tractor held or ship exploding (screen $5400 vs $5C00 colour map)",
+  "messages_once_per_game": {
+   "Reverse Gravity": "$AF8C",
+   "Invisible Landscape": "$AF8D"
+  }
+ },
+ "leave_planet": {
+  "condition": "ship y ($0B/$0C) in [$0100,$0120) and ship not exploding",
+  "outcomes": {
+   "pod attached": "'Mission N Complete' [+ 'Planet Destroyed'] 'Bonus X' -> next planet",
+   "no pod, countdown never started": "'Mission Incomplete' 1.2 s -> same planet again (no life lost, mission number unchanged)",
+   "no pod, countdown running": "'Planet Destroyed' 'Mission N Failed' 'No Bonus' 2.4 s -> next planet, $A3 +8",
+   "out of fuel": "Game Over",
+   "demo": "back to title"
+  }
+ },
+ "death_outcomes": {
+  "countdown active": "'Planet Destroyed / Mission N Failed / No Bonus', next planet (life lost)",
+  "otherwise": "same planet restarts at last restart point (life lost)",
+  "fuel empty": "Game Over"
+ },
+ "ship_explosion_ticks": 60,
+ "highscores": {
+  "count": 8,
+  "default": [
+   [
+    8000,
+    "Firebird"
+   ],
+   [
+    7000,
+    "Firebird"
+   ],
+   [
+    6000,
+    "Firebird"
+   ],
+   [
+    5000,
+    "Firebird"
+   ],
+   [
+    4000,
+    "Firebird"
+   ],
+   [
+    3000,
+    "Firebird"
+   ],
+   [
+    2000,
+    "Firebird"
+   ],
+   [
+    1000,
+    "Firebird"
+   ]
+  ],
+  "entry": "16 bytes at $0100+16*i: 3 BCD score/10 (lo first), 13 chars name (3 spaces + 10 name chars)",
+  "name_input": "max 10 chars, RETURN ends, DEL deletes, $20-$7E accepted",
+  "texts": [
+   "Congratulations",
+   "Please enter your name"
+  ]
+ },
+ "title": {
+  "texts": [
+   "Top Eight Thrusters",
+   "Press SPACE BAR to start"
+  ],
+  "table_format": "'N.   SSSSSS0   NAME'",
+  "demo_after_ticks": 280,
+  "demo": "level 1 with scripted input $B4FC/$B50E (some durations randomised), ends on death/exit or SPACE",
+  "music": "only on title/demo"
+ },
+ "keys": {
+  "rotate_left": "A",
+  "rotate_right": "S",
+  "thrust": "LSHIFT or RSHIFT",
+  "fire": "RETURN",
+  "shield_tractor": "SPACE",
+  "sound_off": "F1",
+  "sound_on": "F3",
+  "pause": "F5",
+  "unpause": "F7",
+  "abort": "RUN/STOP"
+ },
+ "direction_table": [
+  [
+   0,
+   -640
+  ],
+  [
+   62,
+   -627
+  ],
+  [
+   122,
+   -591
+  ],
+  [
+   177,
+   -532
+  ],
+  [
+   226,
+   -452
+  ],
+  [
+   266,
+   -355
+  ],
+  [
+   295,
+   -244
+  ],
+  [
+   313,
+   -124
+  ],
+  [
+   320,
+   0
+  ],
+  [
+   313,
+   124
+  ],
+  [
+   295,
+   244
+  ],
+  [
+   266,
+   355
+  ],
+  [
+   226,
+   452
+  ],
+  [
+   177,
+   532
+  ],
+  [
+   122,
+   591
+  ],
+  [
+   62,
+   627
+  ],
+  [
+   0,
+   640
+  ],
+  [
+   -62,
+   627
+  ],
+  [
+   -122,
+   591
+  ],
+  [
+   -177,
+   532
+  ],
+  [
+   -226,
+   452
+  ],
+  [
+   -266,
+   355
+  ],
+  [
+   -295,
+   244
+  ],
+  [
+   -313,
+   124
+  ],
+  [
+   -320,
+   0
+  ],
+  [
+   -313,
+   -124
+  ],
+  [
+   -295,
+   -244
+  ],
+  [
+   -266,
+   -355
+  ],
+  [
+   -226,
+   -452
+  ],
+  [
+   -177,
+   -532
+  ],
+  [
+   -122,
+   -591
+  ],
+  [
+   -62,
+   -627
+  ]
+ ],
+ "random": "16-bit state s=($3B<<8|$3A): t=((s<<2)|1)&$FFFF; s=(s+t)&$FFFF; hi=(hi+old_lo)&$FF; return hi^lo"
+}
